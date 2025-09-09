@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #### THIRD PARTY ####
+    'rest_framework',
+    "rest_framework_simplejwt",
+    'django_filters',
 
     #### MY APPS ####
     'expens',
