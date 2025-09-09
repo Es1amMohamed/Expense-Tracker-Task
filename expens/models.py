@@ -8,7 +8,7 @@ class Expense(models.Model):
     description = models.CharField(max_length=500)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=timezone.now)
-    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='expenses_category')
     slug = models.SlugField(null=True, blank=True)
     def __str__(self):
         return self.titele

@@ -5,9 +5,10 @@ from datetime import date
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name", read_only=True)
     class Meta:
         model = Expense
-        fields = ["titele", "description", "amount", "category"]
+        fields = ["titele", "description", "amount", "category_name", "date", "slug"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
