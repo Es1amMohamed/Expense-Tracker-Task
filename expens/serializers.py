@@ -6,12 +6,13 @@ from datetime import date
 
 class ExpenseSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     class Meta:
         model = Expense
-        fields = ["titele", "description", "amount", "category_name", "date", "slug"]
+        fields = ["title", "description", "amount", "category_name","category" ,"date", "slug"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id','name']

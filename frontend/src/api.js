@@ -6,8 +6,8 @@ const API = axios.create({
 
 // get all expenses
 export const getExpenses = () => API.get("/expense/");
-
 export const getExpenseDetail = (slug) => API.get(`/expense/${slug}`);
+export const getCategories = () => axios.get("http://127.0.0.1:8000/categories/");
 // add expense
 // export const addExpense = (expenseData) => API.post("/expense/", expenseData);
 
