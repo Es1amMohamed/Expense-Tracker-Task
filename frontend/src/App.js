@@ -6,6 +6,10 @@ import ExpenseList from "./components/ExpenseList";
 import ExpenseCreate from "./components/ExpenseCreate";
 import CategoryCreate from "./components/CategoryCreate";
 import MonthlyReport from "./components/MonthlyReports";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import PrivateRoute from "./components/PrivateRoute";
+
 
 
 // function App() {
@@ -35,11 +39,13 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<ExpenseList />} />
-        <Route path="/expense/:slug" element={<ExpenseDetail />} />
-        <Route path="/add-expense" element={<ExpenseCreate />} />
-        <Route path="/add-category" element={<CategoryCreate />} />
-        <Route path="/monthly-report" element={<MonthlyReport />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register"  element={<Register />} />
+       <Route path="/" element={<PrivateRoute> <ExpenseList /> </PrivateRoute>}/>   
+        <Route path="/expense/:slug" element={<PrivateRoute> <ExpenseDetail /> </PrivateRoute>} />
+        <Route path="/add-expense" element={<PrivateRoute> <ExpenseCreate /> </PrivateRoute>} />
+        <Route path="/add-category" element={<PrivateRoute> <CategoryCreate /> </PrivateRoute>} />
+        <Route path="/monthly-report" element={<PrivateRoute><MonthlyReport /> </PrivateRoute>} />
       </Routes>
     </Router>
   );

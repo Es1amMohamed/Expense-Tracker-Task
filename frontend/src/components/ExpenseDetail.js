@@ -35,13 +35,17 @@ function ExpenseDetail() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Update
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.put(
         `http://127.0.0.1:8000/expense/${slug}/update/`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`
+          }
+        }
       );
       setExpense(res.data);
       setEditMode(false);
@@ -51,13 +55,12 @@ function ExpenseDetail() {
     }
   };
 
-  // Delete
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this expense?")) {
       try {
         await axios.delete(`http://127.0.0.1:8000/expense/${slug}/update/`);
         alert("Expense deleted ❌");
-        navigate("/"); // يرجع لليست بعد المسح
+        navigate("/");
       } catch (err) {
         console.error(err);
       }

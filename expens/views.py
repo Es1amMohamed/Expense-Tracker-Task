@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from datetime import datetime
 from django.db.models import Sum
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import *
 from .serializers import *
 from rest_framework.response import Response
@@ -12,8 +14,10 @@ from django.contrib.auth.decorators import login_required
 
 
 @api_view(['GET'])
+@login_required
 def expense_list(request):
-    expenses = Expense.objects.all()
+    user = request.user
+    expenses = Expense.objects.filter(user=user)
     category = request.GET.get('category')
     date = request.GET.get('date')
 
@@ -28,34 +32,47 @@ def expense_list(request):
 
 @api_view(['GET'])
 def expense_detail(request, slug):
+    user = request.user
     expense = Expense.objects.get(slug=slug)
     serializer = ExpenseSerializer(expense)
     return Response(serializer.data)
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def expense_create(request):
     print("METHOD =>", request.method)
     serializer = ExpenseSerializer(data=request.data)
     if serializer.is_valid():
+        serializer.validated_data['user'] = request.user
         serializer.save()
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
 @api_view(["PUT", "DELETE"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def expense_update(request, slug):
-    expense = Expense.objects.get(slug=slug)
+    try:
+        expense = Expense.objects.get(slug=slug)
+    except Expense.DoesNotExist:
+        return Response({"error": "Expense not found"}, status=404)
+
     if request.method == "PUT":
         serializer = ExpenseSerializer(expense, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+    
     elif request.method == "DELETE":
         expense.delete()
         return Response(status=204)
 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def category_list_create(request):
     if request.method == 'GET':
         categories = Category.objects.all()
@@ -66,6 +83,7 @@ def category_list_create(request):
     elif request.method == 'POST':
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
+            serializer.validated_data['user'] = request.user
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
